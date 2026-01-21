@@ -242,6 +242,7 @@ const PatientAppointments = () => {
             </div>
           )}
         </div>
+        )}
       </div>
     </PatientLayout>
   );
