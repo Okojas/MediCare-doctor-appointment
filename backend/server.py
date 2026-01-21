@@ -323,6 +323,7 @@ def create_payment_order(
     current_user: models.User = Depends(auth.require_role(["patient"])),
     db: Session = Depends(get_db)
 ):
+    import uuid
     # Mock payment order creation
     # In production, integrate with Razorpay/Stripe
     import random
