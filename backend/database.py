@@ -6,11 +6,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Get database URL from environment
-DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://user:password@localhost:5432/medicare')
+# Use SQLite for MVP (easy, no setup required)
+DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///./medicare.db')
 
 # Create SQLAlchemy engine
-engine = create_engine(DATABASE_URL)
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {}
+)
 
 # Create SessionLocal class
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
