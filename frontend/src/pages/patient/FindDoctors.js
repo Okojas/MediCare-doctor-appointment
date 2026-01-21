@@ -236,7 +236,7 @@ const FindDoctors = () => {
         )}
 
         {/* No Results */}
-        {filteredDoctors.length === 0 && (
+        {!loading && !error && filteredDoctors.length === 0 && (
           <div className="text-center py-12">
             <Filter size={48} className="mx-auto text-gray-400 mb-4" />
             <p className="text-lg text-gray-600 mb-2">No doctors found</p>
