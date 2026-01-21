@@ -5,6 +5,10 @@ import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import PatientDashboard from './pages/patient/PatientDashboard';
+import FindDoctors from './pages/patient/FindDoctors';
+import DoctorProfile from './pages/patient/DoctorProfile';
+import BookAppointment from './pages/patient/BookAppointment';
+import PatientAppointments from './pages/patient/PatientAppointments';
 import './App.css';
 
 // Protected Route Component
