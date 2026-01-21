@@ -58,11 +58,12 @@ def register(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
     # Create user
     hashed_password = auth.get_password_hash(user_data.password)
     new_user = models.User(
+        id=str(uuid_module.uuid4()),
         email=user_data.email,
         password_hash=hashed_password,
         name=user_data.name,
         phone=user_data.phone,
-        role=models.UserRole(user_data.role)
+        role=user_data.role  # Changed from models.UserRole enum to string
     )
     db.add(new_user)
     db.commit()
