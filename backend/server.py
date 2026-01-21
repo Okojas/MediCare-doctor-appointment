@@ -72,6 +72,7 @@ def register(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
     # Create patient or doctor profile
     if user_data.role == "patient":
         patient_profile = models.Patient(
+            id=str(uuid_module.uuid4()),
             user_id=new_user.id,
             age=user_data.age,
             gender=user_data.gender
