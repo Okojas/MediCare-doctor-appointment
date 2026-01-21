@@ -259,5 +259,128 @@ def get_admin_stats(
         "revenue": revenue
     }
 
+# ==================== Medical Records Routes ====================
+
+@api_router.get("/medical-records")
+def get_medical_records(
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db)
+):
+    if current_user.role == "patient":
+        records = db.query(models.MedicalRecord).filter(models.MedicalRecord.patient_id == current_user.id).all()
+    elif current_user.role == "doctor":
+        records = db.query(models.MedicalRecord).filter(models.MedicalRecord.doctor_id == current_user.id).all()
+    else:
+        records = db.query(models.MedicalRecord).all()
+    
+    return {"records": records}
+
+from fastapi import UploadFile, File
+import shutil
+from pathlib import Path
+
+# Create uploads directory
+UPLOAD_DIR = Path("/app/backend/uploads")
+UPLOAD_DIR.mkdir(exist_ok=True)
+
+@api_router.post("/medical-records")
+async def upload_medical_record(
+    file: UploadFile = File(...),
+    title: str = None,
+    type: str = "other",
+    notes: str = None,
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db)
+):
+    # Save file
+    file_path = UPLOAD_DIR / f"{uuid.uuid4()}_{file.filename}"
+    with file_path.open("wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    # Create record
+    record = models.MedicalRecord(
+        id=str(uuid.uuid4()),
+        patient_id=current_user.id,
+        type=type,
+        title=title or file.filename,
+        file_url=str(file_path),
+        notes=notes
+    )
+    db.add(record)
+    db.commit()
+    db.refresh(record)
+    
+    return {"message": "File uploaded successfully", "record": record}
+
+# ==================== Payment Routes ====================
+
+@api_router.post("/payments/create-order")
+def create_payment_order(
+    payment_data: dict,
+    current_user: models.User = Depends(auth.require_role(["patient"])),
+    db: Session = Depends(get_db)
+):
+    # Mock payment order creation
+    # In production, integrate with Razorpay/Stripe
+    import random
+    order_id = f"order_{uuid.uuid4()}"
+    
+    return {
+        "order_id": order_id,
+        "amount": payment_data.get("amount"),
+        "currency": "INR",
+        "key": "test_key",  # Would be actual Razorpay key
+        "message": "Payment order created successfully"
+    }
+
+@api_router.post("/payments/verify")
+def verify_payment(
+    payment_data: dict,
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db)
+):
+    # Mock payment verification
+    # In production, verify with payment gateway
+    appointment_id = payment_data.get("appointment_id")
+    
+    if appointment_id:
+        appointment = db.query(models.Appointment).filter(models.Appointment.id == appointment_id).first()
+        if appointment:
+            appointment.payment_status = "paid"
+            db.commit()
+    
+    return {
+        "success": True,
+        "message": "Payment verified successfully"
+    }
+
+# ==================== Video Consultation Routes ====================
+
+@api_router.get("/consultations/{appointment_id}/token")
+def get_video_token(
+    appointment_id: str,
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db)
+):
+    appointment = db.query(models.Appointment).filter(models.Appointment.id == appointment_id).first()
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    # Check authorization
+    if current_user.id not in [appointment.patient_id, appointment.doctor_id]:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    # Mock video token generation
+    # In production, integrate with Agora/Twilio/Zoom
+    import time
+    room_name = f"consultation_{appointment_id}"
+    
+    return {
+        "token": f"mock_token_{uuid.uuid4()}",
+        "room_name": room_name,
+        "appointment_id": appointment_id,
+        "expires_at": int(time.time()) + 3600  # 1 hour from now
+    }
+
 # Include router
 app.include_router(api_router)
