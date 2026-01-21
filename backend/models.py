@@ -125,7 +125,3 @@ class MedicalRecord(Base):
     file_url = Column(String)
     notes = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
-
-    # Relationships
-    patient = relationship("Patient", back_populates="medical_records")
-    doctor = relationship("Doctor", back_populates="medical_records")
