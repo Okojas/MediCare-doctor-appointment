@@ -232,9 +232,9 @@ def update_appointment_status(
         raise HTTPException(status_code=403, detail="Not authorized")
     
     if update_data.status:
-        appointment.status = models.AppointmentStatus(update_data.status)
+        appointment.status = update_data.status
     if update_data.payment_status:
-        appointment.payment_status = models.PaymentStatus(update_data.payment_status)
+        appointment.payment_status = update_data.payment_status
     
     db.commit()
     db.refresh(appointment)
