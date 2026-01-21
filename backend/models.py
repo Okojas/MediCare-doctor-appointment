@@ -102,16 +102,16 @@ class Doctor(Base):
 class Appointment(Base):
     __tablename__ = "appointments"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    patient_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
-    doctor_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    patient_id = Column(String, ForeignKey("users.id"), nullable=False)
+    doctor_id = Column(String, ForeignKey("users.id"), nullable=False)
     date = Column(Date, nullable=False)
-    time = Column(Time, nullable=False)
-    status = Column(Enum(AppointmentStatus), default=AppointmentStatus.pending)
-    type = Column(Enum(AppointmentType), nullable=False)
+    time = Column(String, nullable=False)  # Store as string for SQLite
+    status = Column(String, default="pending")
+    type = Column(String, nullable=False)
     symptoms = Column(Text)
     fee = Column(Numeric(10, 2))
-    payment_status = Column(Enum(PaymentStatus), default=PaymentStatus.pending)
+    payment_status = Column(String, default="pending")
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -122,11 +122,11 @@ class Appointment(Base):
 class MedicalRecord(Base):
     __tablename__ = "medical_records"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    patient_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
-    doctor_id = Column(UUID(as_uuid=True), ForeignKey("users.id"))
-    appointment_id = Column(UUID(as_uuid=True), ForeignKey("appointments.id"))
-    type = Column(Enum(RecordType), nullable=False)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    patient_id = Column(String, ForeignKey("users.id"), nullable=False)
+    doctor_id = Column(String, ForeignKey("users.id"))
+    appointment_id = Column(String, ForeignKey("appointments.id"))
+    type = Column(String, nullable=False)
     title = Column(String, nullable=False)
     file_url = Column(String)
     notes = Column(Text)
