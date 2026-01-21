@@ -113,10 +113,6 @@ class Appointment(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # Relationships
-    patient = relationship("Patient", foreign_keys=[patient_id], back_populates="appointments")
-    doctor = relationship("Doctor", foreign_keys=[doctor_id], back_populates="appointments")
-
 class MedicalRecord(Base):
     __tablename__ = "medical_records"
 
