@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, Filter, Star, MapPin, Clock, Video } from 'lucide-react';
 import PatientLayout from '../../layouts/PatientLayout';
-import { doctors, specialties } from '../../data/medicalMock';
+import { doctorAPI } from '../../services/api';
+import { specialties } from '../../data/medicalMock';
 
 const FindDoctors = () => {
   const navigate = useNavigate();
@@ -12,14 +13,33 @@ const FindDoctors = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('all');
   const [selectedType, setSelectedType] = useState('all');
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Filter doctors
-  const filteredDoctors = doctors.filter(doctor => {
-    const matchesSearch = doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         doctor.specialty.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesSpecialty = selectedSpecialty === 'all' || doctor.specialty === selectedSpecialty;
-    return matchesSearch && matchesSpecialty;
-  });
+  useEffect(() => {
+    fetchDoctors();
+  }, [selectedSpecialty, searchTerm]);
+
+  const fetchDoctors = async () => {
+    try {
+      setLoading(true);
+      const params = {};
+      if (selectedSpecialty !== 'all') params.specialty = selectedSpecialty;
+      if (searchTerm) params.search = searchTerm;
+      
+      const data = await doctorAPI.getAll(params);
+      setDoctors(data.doctors || []);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching doctors:', err);
+      setError('Failed to load doctors');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredDoctors = doctors;
 
   return (
     <PatientLayout>
