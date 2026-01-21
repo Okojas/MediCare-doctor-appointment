@@ -38,15 +38,21 @@ const PatientAppointments = () => {
     ? appointments 
     : appointments.filter(apt => apt.status === filter);
 
-  const handleCancel = (id) => {
+  const handleCancel = async (id) => {
     if (window.confirm('Are you sure you want to cancel this appointment?')) {
-      // Mock cancel - in production would call API
-      alert('Appointment cancelled successfully');
+      try {
+        await appointmentAPI.cancel(id);
+        alert('Appointment cancelled successfully');
+        fetchAppointments(); // Refresh list
+      } catch (error) {
+        console.error('Cancel error:', error);
+        alert('Failed to cancel appointment');
+      }
     }
   };
 
   const handleReschedule = (id) => {
-    alert('Reschedule feature coming soon!');
+    alert('Reschedule feature: Please contact support or cancel and book a new appointment');
   };
 
   return (
