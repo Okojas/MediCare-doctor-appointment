@@ -150,13 +150,29 @@ const FindDoctors = () => {
         </div>
 
         {/* Doctors Grid */}
-        <div className="grid md:grid-cols-2 gap-6">
-          {filteredDoctors.map(doctor => (
-            <div
-              key={doctor.id}
-              className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-lg transition-all cursor-pointer"
-              onClick={() => navigate(`/patient/doctor/${doctor.id}`)}
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading doctors...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <p className="text-red-600 mb-4">{error}</p>
+            <button
+              onClick={fetchDoctors}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg"
             >
+              Try Again
+            </button>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-6">
+            {filteredDoctors.map(doctor => (
+              <div
+                key={doctor.id}
+                className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-lg transition-all cursor-pointer"
+                onClick={() => navigate(`/patient/doctor/${doctor.user_id}`)}
+              >
               <div className="flex gap-4">
                 {/* Doctor Image */}
                 <img
