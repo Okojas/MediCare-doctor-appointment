@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Calendar, Clock, Video, MapPin, User, CreditCard, CheckCircle } from 'lucide-react';
 import PatientLayout from '../../layouts/PatientLayout';
 import { useAuth } from '../../context/AuthContext';
+import { appointmentAPI } from '../../services/api';
 
 const BookAppointment = () => {
   const navigate = useNavigate();
