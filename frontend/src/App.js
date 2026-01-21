@@ -9,6 +9,8 @@ import FindDoctors from './pages/patient/FindDoctors';
 import DoctorProfile from './pages/patient/DoctorProfile';
 import BookAppointment from './pages/patient/BookAppointment';
 import PatientAppointments from './pages/patient/PatientAppointments';
+import DoctorDashboard from './pages/doctor/DoctorDashboard';
+import AdminDashboard from './pages/admin/AdminDashboard';
 import './App.css';
 
 // Protected Route Component
