@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Star, MapPin, Clock, Award, Languages, Calendar, Video, User as UserIcon, ArrowLeft } from 'lucide-react';
 import PatientLayout from '../../layouts/PatientLayout';
-import { doctors, timeSlots } from '../../data/medicalMock';
+import { doctorAPI } from '../../services/api';
+import { timeSlots } from '../../data/medicalMock';
 
 const DoctorProfile = () => {
   const { doctorId } = useParams();
@@ -10,17 +11,48 @@ const DoctorProfile = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [consultationType, setConsultationType] = useState('video');
+  const [doctor, setDoctor] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const doctor = doctors.find(d => d.id === parseInt(doctorId));
+  useEffect(() => {
+    fetchDoctor();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doctorId]);
 
-  if (!doctor) {
+  const fetchDoctor = async () => {
+    try {
+      setLoading(true);
+      const data = await doctorAPI.getById(doctorId);
+      setDoctor(data);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching doctor:', err);
+      setError('Failed to load doctor details');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
     return (
       <PatientLayout>
         <div className="text-center py-12">
-          <p className="text-lg text-gray-600">Doctor not found</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading doctor details...</p>
+        </div>
+      </PatientLayout>
+    );
+  }
+
+  if (error || !doctor) {
+    return (
+      <PatientLayout>
+        <div className="text-center py-12">
+          <p className="text-lg text-gray-600 mb-4">{error || 'Doctor not found'}</p>
           <button
             onClick={() => navigate('/patient/find-doctor')}
-            className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg"
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg"
           >
             Browse Doctors
           </button>
