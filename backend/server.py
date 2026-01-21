@@ -147,10 +147,17 @@ def get_doctors(
 
 @api_router.get("/doctors/{doctor_id}", response_model=schemas.DoctorResponse)
 def get_doctor(doctor_id: str, db: Session = Depends(get_db)):
-    doctor = db.query(models.Doctor).filter(models.Doctor.id == doctor_id).first()
+    doctor = db.query(models.Doctor).filter(models.Doctor.user_id == doctor_id).first()
     if not doctor:
         raise HTTPException(status_code=404, detail="Doctor not found")
-    return doctor
+    
+    # Get specialty info
+    specialty = db.query(models.Specialty).filter(models.Specialty.id == doctor.specialty_id).first()
+    doctor_data = schemas.DoctorResponse.from_orm(doctor)
+    if specialty:
+        doctor_data.specialty = {"id": specialty.id, "name": specialty.name, "description": specialty.description}
+    
+    return doctor_data
 
 # ==================== Appointment Routes ====================
 
