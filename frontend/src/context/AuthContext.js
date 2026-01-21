@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { users } from '../data/medicalMock';
+import { authAPI } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -14,49 +14,88 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Check if user is logged in from localStorage
+    const token = localStorage.getItem('token');
     const savedUser = localStorage.getItem('medicalAppUser');
-    if (savedUser) {
-      const userData = JSON.parse(savedUser);
-      setUser(userData);
-      setIsAuthenticated(true);
+    
+    if (token && savedUser) {
+      try {
+        const userData = JSON.parse(savedUser);
+        setUser(userData);
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error('Error parsing saved user:', error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('medicalAppUser');
+      }
     }
+    setLoading(false);
   }, []);
 
-  const login = (email, password, role) => {
-    // Mock login - In production, this would call backend API
-    const foundUser = users.find(
-      u => u.email === email && u.role === role
-    );
-
-    if (foundUser) {
-      setUser(foundUser);
-      setIsAuthenticated(true);
-      localStorage.setItem('medicalAppUser', JSON.stringify(foundUser));
-      return { success: true, user: foundUser };
+  const login = async (email, password, role) => {
+    try {
+      const response = await authAPI.login({ email, password, role });
+      
+      if (response.access_token) {
+        localStorage.setItem('token', response.access_token);
+        localStorage.setItem('medicalAppUser', JSON.stringify(response.user));
+        setUser(response.user);
+        setIsAuthenticated(true);
+        return { success: true, user: response.user };
+      }
+      
+      return { success: false, message: 'Login failed' };
+    } catch (error) {
+      console.error('Login error:', error);
+      return { 
+        success: false, 
+        message: error.response?.data?.detail || 'Invalid credentials' 
+      };
     }
-    return { success: false, message: 'Invalid credentials' };
   };
 
-  const register = (userData) => {
-    // Mock registration - In production, this would call backend API
-    const newUser = {
-      id: users.length + 1,
-      ...userData
-    };
-    setUser(newUser);
-    setIsAuthenticated(true);
-    localStorage.setItem('medicalAppUser', JSON.stringify(newUser));
-    return { success: true, user: newUser };
+  const register = async (userData) => {
+    try {
+      const response = await authAPI.register(userData);
+      
+      if (response.access_token) {
+        localStorage.setItem('token', response.access_token);
+        localStorage.setItem('medicalAppUser', JSON.stringify(response.user));
+        setUser(response.user);
+        setIsAuthenticated(true);
+        return { success: true, user: response.user };
+      }
+      
+      return { success: false, message: 'Registration failed' };
+    } catch (error) {
+      console.error('Registration error:', error);
+      return { 
+        success: false, 
+        message: error.response?.data?.detail || 'Registration failed' 
+      };
+    }
   };
 
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
+    localStorage.removeItem('token');
     localStorage.removeItem('medicalAppUser');
   };
+
+  if (loading) {
+    return (
+      <div className=\"min-h-screen flex items-center justify-center\">
+        <div className=\"text-center\">
+          <div className=\"animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4\"></div>
+          <p className=\"text-gray-600\">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider value={{ user, isAuthenticated, login, register, logout }}>
