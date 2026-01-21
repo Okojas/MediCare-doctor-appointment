@@ -42,6 +42,38 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/patient/find-doctor"
+        element={
+          <ProtectedRoute allowedRoles={['patient']}>
+            <FindDoctors />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/patient/doctor/:doctorId"
+        element={
+          <ProtectedRoute allowedRoles={['patient']}>
+            <DoctorProfile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/patient/book-appointment"
+        element={
+          <ProtectedRoute allowedRoles={['patient']}>
+            <BookAppointment />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/patient/appointments"
+        element={
+          <ProtectedRoute allowedRoles={['patient']}>
+            <PatientAppointments />
+          </ProtectedRoute>
+        }
+      />
       
       {/* Default redirect */}
       <Route path="*" element={<Navigate to="/" replace />} />
