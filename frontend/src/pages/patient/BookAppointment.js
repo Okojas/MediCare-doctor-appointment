@@ -22,14 +22,28 @@ const BookAppointment = () => {
 
   const handleBooking = async () => {
     setIsBooking(true);
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      // Create appointment via API
+      const appointmentData = {
+        doctor_id: doctor.user_id,
+        date: date,
+        time: time,
+        type: type,
+        symptoms: symptoms
+      };
+      
+      await appointmentAPI.create(appointmentData);
+      
       setIsBooking(false);
       setBookingComplete(true);
       setTimeout(() => {
         navigate('/patient/appointments');
       }, 2000);
-    }, 1500);
+    } catch (error) {
+      console.error('Booking error:', error);
+      setIsBooking(false);
+      alert(error.response?.data?.detail || 'Failed to book appointment. Please try again.');
+    }
   };
 
   if (bookingComplete) {
