@@ -60,8 +60,7 @@ class Patient(Base):
 
     # Relationships
     user = relationship("User", back_populates="patient_profile")
-    appointments = relationship("Appointment", foreign_keys="Appointment.patient_id", back_populates="patient")
-    medical_records = relationship("MedicalRecord", back_populates="patient")
+    medical_records = relationship("MedicalRecord", foreign_keys="MedicalRecord.patient_id", primaryjoin="Patient.user_id==MedicalRecord.patient_id")
 
 class Specialty(Base):
     __tablename__ = "specialties"
