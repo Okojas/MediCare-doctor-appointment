@@ -95,8 +95,7 @@ class Doctor(Base):
     # Relationships
     user = relationship("User", back_populates="doctor_profile")
     specialty = relationship("Specialty", back_populates="doctors")
-    appointments = relationship("Appointment", foreign_keys="Appointment.doctor_id", back_populates="doctor")
-    medical_records = relationship("MedicalRecord", back_populates="doctor")
+    medical_records = relationship("MedicalRecord", foreign_keys="MedicalRecord.doctor_id", primaryjoin="Doctor.user_id==MedicalRecord.doctor_id")
 
 class Appointment(Base):
     __tablename__ = "appointments"
