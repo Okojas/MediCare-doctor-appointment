@@ -232,7 +232,8 @@ const FindDoctors = () => {
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        )}
 
         {/* No Results */}
         {filteredDoctors.length === 0 && (
