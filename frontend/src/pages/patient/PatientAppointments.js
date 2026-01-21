@@ -111,8 +111,24 @@ const PatientAppointments = () => {
         </div>
 
         {/* Appointments List */}
-        <div className="space-y-4">
-          {filteredAppointments.length > 0 ? (
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading appointments...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <p className="text-red-600 mb-4">{error}</p>
+            <button
+              onClick={fetchAppointments}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg"
+            >
+              Try Again
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filteredAppointments.length > 0 ? (
             filteredAppointments.map((apt) => {
               const StatusIcon = statusConfig[apt.status]?.icon || AlertCircle;
               const statusColor = statusConfig[apt.status]?.color || 'gray';
