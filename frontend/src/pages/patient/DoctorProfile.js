@@ -117,8 +117,8 @@ const DoctorProfile = () => {
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <h1 className="text-2xl font-bold text-gray-900 mb-1">{doctor.name}</h1>
-                      <p className="text-lg text-blue-600 font-medium mb-2">{doctor.specialty}</p>
+                      <h1 className="text-2xl font-bold text-gray-900 mb-1">{doctor.user?.name || doctor.name}</h1>
+                      <p className="text-lg text-blue-600 font-medium mb-2">{doctor.specialty?.name || 'Specialist'}</p>
                     </div>
                     {doctor.verified && (
                       <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
