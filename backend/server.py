@@ -294,6 +294,7 @@ async def upload_medical_record(
     current_user: models.User = Depends(auth.get_current_user),
     db: Session = Depends(get_db)
 ):
+    import uuid
     # Save file
     file_path = UPLOAD_DIR / f"{uuid.uuid4()}_{file.filename}"
     with file_path.open("wb") as buffer:
