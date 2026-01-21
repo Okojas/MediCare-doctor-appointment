@@ -23,7 +23,7 @@ const RegisterPage = () => {
     { id: 'doctor', name: 'Doctor', icon: Stethoscope, color: 'green' }
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -43,7 +43,7 @@ const RegisterPage = () => {
     };
     delete userData.confirmPassword;
 
-    const result = register(userData);
+    const result = await register(userData);
     if (result.success) {
       // Navigate based on role
       if (role === 'patient') {
@@ -52,7 +52,7 @@ const RegisterPage = () => {
         navigate('/doctor/dashboard');
       }
     } else {
-      setError('Registration failed. Please try again.');
+      setError(result.message || 'Registration failed. Please try again.');
     }
   };
 
