@@ -32,3 +32,74 @@
         transform: rotate(360deg);
     }
 }
+
+/* Custom Animations */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.6s ease-out;
+}
+
+.animate-slide-up {
+    animation: slide-up 0.6s ease-out;
+}
+
+.animation-delay-200 {
+    animation-delay: 0.2s;
+    animation-fill-mode: both;
+}
+
+.animation-delay-400 {
+    animation-delay: 0.4s;
+    animation-fill-mode: both;
+}
+
+.animation-delay-600 {
+    animation-delay: 0.6s;
+    animation-fill-mode: both;
+}
+
+.animation-delay-800 {
+    animation-delay: 0.8s;
+    animation-fill-mode: both;
+}
+
+/* Smooth transitions */
+* {
+    transition-property: background-color, border-color, color;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+/* Override for transforms and specific properties */
+button,
+a,
+.transform {
+    transition-property: all;
+}
+
+/* Line clamp utility */
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
