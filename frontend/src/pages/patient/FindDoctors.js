@@ -222,7 +222,7 @@ const FindDoctors = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/patient/doctor/${doctor.id}`);
+                      navigate(`/patient/doctor/${doctor.user_id}`);
                     }}
                     className="w-full mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
                   >
