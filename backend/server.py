@@ -171,20 +171,22 @@ def create_appointment(
     current_user: models.User = Depends(auth.require_role(["patient"])),
     db: Session = Depends(get_db)
 ):
+    import uuid
     # Get doctor to retrieve fee
     doctor = db.query(models.Doctor).filter(models.Doctor.user_id == appointment_data.doctor_id).first()
     if not doctor:
         raise HTTPException(status_code=404, detail="Doctor not found")
     
     new_appointment = models.Appointment(
+        id=str(uuid.uuid4()),
         patient_id=current_user.id,
         doctor_id=appointment_data.doctor_id,
         date=appointment_data.date,
-        time=appointment_data.time,
-        type=models.AppointmentType(appointment_data.type),
+        time=str(appointment_data.time),  # Convert time to string
+        type=appointment_data.type,
         symptoms=appointment_data.symptoms,
         fee=doctor.fee,
-        status=models.AppointmentStatus.confirmed
+        status="confirmed"
     )
     
     db.add(new_appointment)
