@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, MapPin, Star, Video, FileText } from 'lucide-react';
-import PatientLayout from '../layouts/PatientLayout';
-import { useAuth } from '../context/AuthContext';
-import { appointments, doctors } from '../data/medicalMock';
+import PatientLayout from '../../layouts/PatientLayout';
+import { useAuth } from '../../context/AuthContext';
+import { appointments, doctors } from '../../data/medicalMock';
 
 const PatientDashboard = () => {
   const navigate = useNavigate();
