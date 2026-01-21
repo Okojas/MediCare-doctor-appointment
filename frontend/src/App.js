@@ -77,6 +77,26 @@ function AppRoutes() {
         }
       />
       
+      {/* Doctor Routes */}
+      <Route
+        path="/doctor/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={['doctor']}>
+            <DoctorDashboard />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Admin Routes */}
+      <Route
+        path="/admin/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+      
       {/* Default redirect */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
