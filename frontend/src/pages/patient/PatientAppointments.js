@@ -1,10 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Video, MapPin, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import PatientLayout from '../../layouts/PatientLayout';
-import { appointments } from '../../data/medicalMock';
+import { appointmentAPI } from '../../services/api';
 
 const PatientAppointments = () => {
   const [filter, setFilter] = useState('all');
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchAppointments();
+  }, []);
+
+  const fetchAppointments = async () => {
+    try {
+      setLoading(true);
+      const data = await appointmentAPI.getAll();
+      setAppointments(data || []);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching appointments:', err);
+      setError('Failed to load appointments');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const statusConfig = {
     confirmed: { color: 'green', icon: CheckCircle, label: 'Confirmed' },
