@@ -51,8 +51,8 @@ class User(Base):
 class Patient(Base):
     __tablename__ = "patients"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), unique=True)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey("users.id"), unique=True)
     age = Column(Integer)
     gender = Column(String)
     blood_group = Column(String)
