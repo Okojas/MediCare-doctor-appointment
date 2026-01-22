@@ -22,12 +22,33 @@ const VideoCall = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
 
+  const initializeCall = async () => {
+    try {
+      setLoading(true);
+      
+      // Get video token from backend
+      const response = await appointmentAPI.getVideoToken(appointmentId);
+      const { token, room_name } = response;
+      
+      // Mock video call setup
+      // In production, initialize real video service here
+      await setupMockVideoCall(token, room_name);
+      
+      setIsConnected(true);
+      setLoading(false);
+    } catch (err) {
+      console.error('Failed to initialize call:', err);
+      setError('Failed to join video call. Please try again.');
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     initializeCall();
     return () => {
       cleanupCall();
     };
-  }, []);
+  }, [initializeCall]);
 
   useEffect(() => {
     let interval;
