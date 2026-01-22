@@ -11,6 +11,7 @@ import models
 import schemas
 import auth
 from database import engine, get_db
+from seed_data import seed_database
 
 # Load environment variables
 ROOT_DIR = Path(__file__).parent
@@ -431,17 +432,6 @@ def get_video_token(
     if current_user.id not in [appointment.patient_id, appointment.doctor_id]:
         raise HTTPException(status_code=403, detail="Not authorized")
     
-    # Mock video token generation
-    # In production, integrate with Agora/Twilio/Zoom
-    import time
-    room_name = f"consultation_{appointment_id}"
-    
-    return {
-        "token": f"mock_token_{uuid.uuid4()}",
-        "room_name": room_name,
-        "appointment_id": appointment_id,
-        "expires_at": int(time.time()) + 3600  # 1 hour from now
-    }
 
 # Include router
 app.include_router(api_router)
