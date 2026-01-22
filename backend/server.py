@@ -433,5 +433,24 @@ def get_video_token(
         raise HTTPException(status_code=403, detail="Not authorized")
     
 
+# Seed database endpoint
+@api_router.post("/seed")
+def seed_database_endpoint():
+    try:
+        seed_database()
+        return {"message": "Database seeded successfully"}
+    except Exception as e:
+        logger.error(f"Seeding error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Seeding failed: {str(e)}")
+
+@api_router.get("/seed")
+def seed_database_endpoint_get():
+    try:
+        seed_database()
+        return {"message": "Database seeded successfully"}
+    except Exception as e:
+        logger.error(f"Seeding error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Seeding failed: {str(e)}")
+
 # Include router
 app.include_router(api_router)
