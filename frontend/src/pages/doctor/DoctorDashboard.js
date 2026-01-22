@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, Users, TrendingUp, CheckCircle, AlertCircle } from 'lucide-react';
 import DoctorLayout from '../../layouts/DoctorLayout';
 import { useAuth } from '../../context/AuthContext';
@@ -6,6 +7,7 @@ import { appointments } from '../../data/medicalMock';
 
 const DoctorDashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   // Filter appointments for this doctor (mock - would come from API)
   const todayAppointments = appointments.filter(apt => apt.status === 'confirmed').slice(0, 4);
@@ -74,7 +76,10 @@ const DoctorDashboard = () => {
                 </div>
                 <div className="flex gap-2">
                   {apt.type === 'video' && (
-                    <button className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors">
+                    <button 
+                      onClick={() => navigate(`/patient/video-call/${apt.id}`)}
+                      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors"
+                    >
                       Start Call
                     </button>
                   )}

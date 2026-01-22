@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, Video, MapPin, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import PatientLayout from '../../layouts/PatientLayout';
 import { appointmentAPI } from '../../services/api';
 
 const PatientAppointments = () => {
+  const navigate = useNavigate();
   const [filter, setFilter] = useState('all');
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -198,7 +200,10 @@ const PatientAppointments = () => {
                     {/* Right - Actions */}
                     <div className="flex lg:flex-col gap-2 lg:w-40">
                       {apt.status === 'confirmed' && apt.type === 'video' && (
-                        <button className="flex-1 lg:flex-none px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors text-sm">
+                        <button 
+                          onClick={() => navigate(`/patient/video-call/${apt.id}`)}
+                          className="flex-1 lg:flex-none px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors text-sm"
+                        >
                           Join Call
                         </button>
                       )}

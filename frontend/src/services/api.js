@@ -77,8 +77,13 @@ export const appointmentAPI = {
     return response.data;
   },
 
-  updateStatus: async (appointmentId, updateData) => {
-    const response = await apiClient.patch(`/appointments/${appointmentId}/status`, updateData);
+  updateStatus: async (appointmentId, status) => {
+    const response = await apiClient.patch(`/appointments/${appointmentId}/status`, { status });
+    return response.data;
+  },
+
+  getVideoToken: async (appointmentId) => {
+    const response = await apiClient.get(`/consultations/${appointmentId}/token`);
     return response.data;
   },
 

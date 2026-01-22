@@ -75,9 +75,9 @@ class DoctorResponse(BaseModel):
 
 # Appointment Schemas
 class AppointmentCreate(BaseModel):
-    doctor_id: uuid.UUID
+    doctor_id: str
     date: date
-    time: time
+    time: str
     type: str  # 'video' or 'in-person'
     symptoms: str
 
@@ -86,11 +86,11 @@ class AppointmentUpdate(BaseModel):
     payment_status: Optional[str] = None
 
 class AppointmentResponse(BaseModel):
-    id: uuid.UUID
-    patient_id: uuid.UUID
-    doctor_id: uuid.UUID
+    id: str
+    patient_id: str
+    doctor_id: str
     date: date
-    time: time
+    time: str
     status: str
     type: str
     symptoms: str

@@ -177,8 +177,8 @@ const FindDoctors = () => {
               <div className="flex gap-4">
                 {/* Doctor Image */}
                 <img
-                  src={doctor.image}
-                  alt={doctor.name}
+                  src={doctor.user?.image_url || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop'}
+                  alt={doctor.user?.name || 'Doctor'}
                   className="w-24 h-24 rounded-lg object-cover flex-shrink-0"
                 />
 
@@ -186,8 +186,8 @@ const FindDoctors = () => {
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900">{doctor.name}</h3>
-                      <p className="text-sm text-blue-600 font-medium">{doctor.specialty}</p>
+                      <h3 className="text-lg font-bold text-gray-900">{doctor.user?.name || 'Unknown Doctor'}</h3>
+                      <p className="text-sm text-blue-600 font-medium">{doctor.specialty?.name || 'General'}</p>
                     </div>
                     {doctor.verified && (
                       <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
@@ -196,16 +196,16 @@ const FindDoctors = () => {
                     )}
                   </div>
 
-                  <p className="text-sm text-gray-600 mb-3">{doctor.qualification}</p>
+                  <p className="text-sm text-gray-600 mb-3">{doctor.qualification || 'MBBS, MD'}</p>
 
                   <div className="flex flex-wrap gap-3 text-sm text-gray-500 mb-3">
                     <span className="flex items-center gap-1">
                       <Clock size={14} />
-                      {doctor.experience} years exp.
+                      {doctor.experience || 10} years exp.
                     </span>
                     <span className="flex items-center gap-1">
                       <MapPin size={14} />
-                      {doctor.location}
+                      {doctor.hospital || 'City Hospital'}
                     </span>
                   </div>
 
@@ -213,11 +213,11 @@ const FindDoctors = () => {
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-1">
                         <Star size={16} className="text-yellow-400 fill-yellow-400" />
-                        <span className="font-semibold text-gray-900">{doctor.rating}</span>
+                        <span className="font-semibold text-gray-900">{doctor.rating || '4.5'}</span>
                       </div>
-                      <span className="text-sm text-gray-500">({doctor.reviews} reviews)</span>
+                      <span className="text-sm text-gray-500">({doctor.reviews || 150} reviews)</span>
                     </div>
-                    <p className="text-lg font-bold text-gray-900">₹{doctor.fee}</p>
+                    <p className="text-lg font-bold text-gray-900">₹{doctor.fee || '1500'}</p>
                   </div>
 
                   <button

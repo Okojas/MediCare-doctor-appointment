@@ -114,7 +114,10 @@ const PatientDashboard = () => {
                   </div>
                   <div className="flex gap-2">
                     {apt.type === 'video' && (
-                      <button className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors">
+                      <button 
+                        onClick={() => navigate(`/patient/video-call/${apt.id}`)}
+                        className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors"
+                      >
                         Join Call
                       </button>
                     )}

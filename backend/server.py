@@ -50,46 +50,50 @@ async def root():
 
 @api_router.post("/auth/register", response_model=schemas.TokenResponse)
 def register(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
-    # Check if user already exists
-    existing_user = db.query(models.User).filter(models.User.email == user_data.email).first()
-    if existing_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    
-    # Create user
-    hashed_password = auth.get_password_hash(user_data.password)
-    new_user = models.User(
-        id=str(uuid_module.uuid4()),
-        email=user_data.email,
-        password_hash=hashed_password,
-        name=user_data.name,
-        phone=user_data.phone,
-        role=user_data.role  # Changed from models.UserRole enum to string
-    )
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    
-    # Create patient or doctor profile
-    if user_data.role == "patient":
-        patient_profile = models.Patient(
+    try:
+        # Check if user already exists
+        existing_user = db.query(models.User).filter(models.User.email == user_data.email).first()
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        
+        # Create user
+        hashed_password = auth.get_password_hash(user_data.password)
+        new_user = models.User(
             id=str(uuid_module.uuid4()),
-            user_id=new_user.id,
-            age=user_data.age,
-            gender=user_data.gender
+            email=user_data.email,
+            password_hash=hashed_password,
+            name=user_data.name,
+            phone=user_data.phone,
+            role=user_data.role
         )
-        db.add(patient_profile)
+        db.add(new_user)
         db.commit()
-    
-    # Generate token
-    access_token = auth.create_access_token(
-        data={"sub": str(new_user.id), "role": new_user.role}
-    )
-    
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "user": new_user
-    }
+        db.refresh(new_user)
+        
+        # Create patient or doctor profile
+        if user_data.role == "patient":
+            patient_profile = models.Patient(
+                id=str(uuid_module.uuid4()),
+                user_id=new_user.id,
+                age=user_data.age,
+                gender=user_data.gender
+            )
+            db.add(patient_profile)
+            db.commit()
+        
+        # Generate token
+        access_token = auth.create_access_token(
+            data={"sub": str(new_user.id), "role": new_user.role}
+        )
+        
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "user": new_user
+        }
+    except Exception as e:
+        logger.error(f"Registration error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Registration failed: {str(e)}")
 
 @api_router.post("/auth/login", response_model=schemas.TokenResponse)
 def login(credentials: schemas.UserLogin, db: Session = Depends(get_db)):
@@ -144,12 +148,39 @@ def get_doctors(
     total = query.count()
     doctors = query.offset(offset).limit(limit).all()
     
+    # Serialize doctors manually
+    doctors_list = []
+    for doctor in doctors:
+        doctor_dict = {
+            "id": doctor.id,
+            "user_id": doctor.user_id,
+            "specialty_id": doctor.specialty_id,
+            "experience": doctor.experience,
+            "fee": doctor.fee,
+            "rating": doctor.rating,
+            "languages": doctor.languages,
+            "availability_days": doctor.availability_days,
+            "user": {
+                "id": doctor.user.id,
+                "name": doctor.user.name,
+                "email": doctor.user.email,
+                "phone": doctor.user.phone,
+                "role": doctor.user.role
+            },
+            "specialty": {
+                "id": doctor.specialty.id,
+                "name": doctor.specialty.name,
+                "description": doctor.specialty.description
+            }
+        }
+        doctors_list.append(doctor_dict)
+    
     return {
-        "doctors": doctors,
+        "doctors": doctors_list,
         "total": total
     }
 
-@api_router.get("/doctors/{doctor_id}", response_model=schemas.DoctorResponse)
+@api_router.get("/doctors/{doctor_id}")
 def get_doctor(doctor_id: str, db: Session = Depends(get_db)):
     doctor = db.query(models.Doctor).filter(models.Doctor.user_id == doctor_id).first()
     if not doctor:
@@ -157,9 +188,30 @@ def get_doctor(doctor_id: str, db: Session = Depends(get_db)):
     
     # Get specialty info
     specialty = db.query(models.Specialty).filter(models.Specialty.id == doctor.specialty_id).first()
-    doctor_data = schemas.DoctorResponse.from_orm(doctor)
-    if specialty:
-        doctor_data.specialty = {"id": specialty.id, "name": specialty.name, "description": specialty.description}
+    
+    # Manually serialize to avoid schema issues
+    doctor_data = {
+        "id": doctor.id,
+        "user_id": doctor.user_id,
+        "specialty_id": doctor.specialty_id,
+        "experience": doctor.experience,
+        "fee": doctor.fee,
+        "rating": doctor.rating,
+        "languages": doctor.languages,
+        "availability_days": doctor.availability_days,
+        "user": {
+            "id": doctor.user.id,
+            "name": doctor.user.name,
+            "email": doctor.user.email,
+            "phone": doctor.user.phone,
+            "role": doctor.user.role
+        },
+        "specialty": {
+            "id": specialty.id,
+            "name": specialty.name,
+            "description": specialty.description
+        } if specialty else None
+    }
     
     return doctor_data
 
@@ -286,7 +338,7 @@ import shutil
 from pathlib import Path
 
 # Create uploads directory
-UPLOAD_DIR = Path("/app/backend/uploads")
+UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
 
 @api_router.post("/medical-records")

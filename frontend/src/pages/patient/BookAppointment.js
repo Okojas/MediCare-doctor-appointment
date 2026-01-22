@@ -27,8 +27,8 @@ const BookAppointment = () => {
       // Create appointment via API
       const appointmentData = {
         doctor_id: doctor.user_id,
-        date: date,
-        time: time,
+        date: date instanceof Date ? date.toISOString().split('T')[0] : date, // Format as YYYY-MM-DD
+        time: String(time),
         type: type,
         symptoms: symptoms
       };
@@ -81,13 +81,13 @@ const BookAppointment = () => {
               
               <div className="flex gap-4 mb-6">
                 <img
-                  src={doctor.image}
-                  alt={doctor.name}
+                  src={doctor.user?.image_url || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop'}
+                  alt={doctor.user?.name || 'Doctor'}
                   className="w-20 h-20 rounded-lg object-cover"
                 />
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900">{doctor.name}</h3>
-                  <p className="text-blue-600 font-medium">{doctor.specialty}</p>
+                  <h3 className="text-lg font-bold text-gray-900">{doctor.user?.name || 'Unknown Doctor'}</h3>
+                  <p className="text-blue-600 font-medium">{doctor.specialty?.name || 'General'}</p>
                   <p className="text-sm text-gray-600">{doctor.qualification}</p>
                 </div>
               </div>

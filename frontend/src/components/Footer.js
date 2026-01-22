@@ -86,8 +86,8 @@ const Footer = () => {
 
         {/* Copyright */}
         <div className="pt-8 border-t border-slate-200 dark:border-slate-800 text-center">
-          <p className="text-slate-600 dark:text-slate-400 text-sm flex items-center justify-center gap-1">
-            © {currentYear} {personalInfo.name}. Made with <Heart size={16} className="text-red-500" fill="currentColor" /> and React
+          <p className="text-slate-600 dark:text-slate-400 text-sm">
+            &copy; {currentYear} {personalInfo.name}
           </p>
         </div>
       </div>

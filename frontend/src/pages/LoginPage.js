@@ -19,11 +19,11 @@ const LoginPage = () => {
     { id: 'admin', name: 'Admin', icon: Shield, color: 'purple' }
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    const result = login(formData.email, formData.password, role);
+    const result = await login(formData.email, formData.password, role);
     if (result.success) {
       // Navigate based on role
       switch (role) {

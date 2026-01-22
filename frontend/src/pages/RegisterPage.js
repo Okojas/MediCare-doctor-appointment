@@ -39,7 +39,8 @@ const RegisterPage = () => {
 
     const userData = {
       ...formData,
-      role
+      role,
+      age: parseInt(formData.age) || 0
     };
     delete userData.confirmPassword;
 
