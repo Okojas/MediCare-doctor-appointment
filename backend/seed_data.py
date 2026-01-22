@@ -5,9 +5,15 @@ import models
 from auth import get_password_hash
 from datetime import datetime, timedelta
 import uuid
+import os
 
 def seed_database():
-    db = SessionLocal()
+    # Use PostgreSQL if DATABASE_URL is set, otherwise fallback to SQLite
+    if os.getenv("DATABASE_URL"):
+        from database import SessionLocal
+        db = SessionLocal()
+    else:
+        db = SessionLocal()
     
     try:
         print("🌱 Starting database seeding...")
